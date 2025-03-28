@@ -25,6 +25,8 @@ const difficultySettings = {
   let seconds = 0;
 let timerInterval;
 let gameStartTime;
+let timeLeft;
+let maxTime;
 
   // Инициализация новой игры
   function initGame() {
@@ -33,17 +35,37 @@ let gameStartTime;
     cols = difficultySettings[difficulty].cols;
     mines = difficultySettings[difficulty].mines;
     
+    // Устанавливаем максимальное время в зависимости от сложности
+    switch(difficulty) {
+        case 'easy':
+            maxTime = 120; // 2 минуты
+            break;
+        case 'medium':
+            maxTime = 210; // 3.5 минуты
+            break;
+        case 'hard':
+            maxTime = 300; // 5 минут
+            break;
+    }
+    timeLeft = maxTime;
+    
+    stopTimer(); // Останавливаем таймер при новой игре
+    updateTimerDisplay();
+    
+    // Устанавливаем максимальное количество флагов
+    let maxFlags = mines;
+    
     board = Array(rows).fill().map(() => Array(cols).fill(0));
     revealedCount = 0;
     flaggedCount = 0;
     gameOver = false;
-     // Скрываем модальные окна
-     winModal.style.display = 'none';
-     loseModal.style.display = 'none';
+    
+    winModal.style.display = 'none';
+    loseModal.style.display = 'none';
     
     renderBoard();
     infoElement.textContent = `Флагов: ${flaggedCount}/${mines}`;
-  }
+}
   
   // Размещение мин
   function placeMines(firstClickRow, firstClickCol) {
@@ -196,54 +218,35 @@ let gameStartTime;
     infoElement.textContent = `Флагов: ${flaggedCount}/${mines}`;
   }
 
-  function initGame() {
-    const difficulty = difficultySelect.value;
-    rows = difficultySettings[difficulty].rows;
-    cols = difficultySettings[difficulty].cols;
-    mines = difficultySettings[difficulty].mines;
-    stopTimer(); // Останавливаем таймер при новой игре
-    seconds = 0;
-    updateTimerDisplay();
-    
-    // Устанавливаем максимальное количество флагов в зависимости от сложности
-    let maxFlags;
-    switch(difficulty) {
-        case 'easy':
-            maxFlags = 10;
-            break;
-        case 'medium':
-            maxFlags = 40;
-            break;
-        case 'hard':
-            maxFlags = 99;
-            break;
-        default:
-            maxFlags = 10;
-    }
-    
-    board = Array(rows).fill().map(() => Array(cols).fill(0));
-    revealedCount = 0;
-    flaggedCount = 0;
-    gameOver = false;
-    
-    winModal.style.display = 'none';
-    loseModal.style.display = 'none';
-    
-    renderBoard();
-    infoElement.textContent = `Флагов: ${flaggedCount}/${mines} (макс. ${maxFlags})`;
-}
+  
 function startTimer() {
-    seconds = 0;
-    gameStartTime = Date.now();
+    timeLeft = maxTime;
     updateTimerDisplay();
     timerInterval = setInterval(updateTimer, 1000);
 }
 function updateTimer() {
-    seconds = Math.floor((Date.now() - gameStartTime) / 1000);
+    timeLeft--;
     updateTimerDisplay();
+    if (timeLeft <= 30) {
+        document.getElementById('timer').classList.add('warning');
+    } else {
+        document.getElementById('timer').classList.remove('warning');
+    }
+    
+    if (timeLeft <= 0) {
+        stopTimer();
+        gameOver = true;
+        infoElement.textContent = 'Время вышло! Игра окончена.';
+        revealAllMines();
+        document.getElementById('lose-time').textContent = maxTime;
+        loseModal.style.display = 'flex';
+    }
 }
+
 function updateTimerDisplay() {
-    document.getElementById('timer').textContent = `Время: ${seconds}`;
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('timer').textContent = `Время: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
 function stopTimer() {

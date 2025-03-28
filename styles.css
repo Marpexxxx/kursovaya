@@ -184,3 +184,13 @@ button:hover {
     align-items: center;
     gap: 5px;
 }
+#timer.warning {
+    color: #f00;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
