@@ -1,14 +1,56 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <style>
+        ::selection {
+            background: #0f0;
+            color: #000;
+        }
+        ::-moz-selection {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сапер</title>
+    <title>Сапёр</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Сапер</h1>
-    <div id="game"></div>
+    <h1>Сапёр</h1>
+    <div class="controls">
+        <select id="difficulty">
+            <option value="easy">Лёгкий</option>
+            <option value="medium">Средний</option>
+            <option value="hard">Сложный</option>
+        </select>
+        <button id="new-game">Новая игра</button>
+    </div>
+    <div class="game-container">
+        <div class="board" id="board"></div>
+    </div>
+    <div class="info">
+        <div id="timer">Время: 0</div>
+    </div>
+    <div class="info" id="info"></div>
+    <audio id="explosion-sound" src="explosion.mp3" preload="auto"></audio>
+     <!-- Модальное окно победы -->
+     <div id="win-modal" class="modal">
+        <div class="modal-content">
+            <img src="win.png" alt="Победа!" class="result-image">
+            <p>Ваше время: <span id="win-time">0</span> сек</p>
+            <!-- ... остальное содержимое ... -->
+        </div>
+    </div>
+     <!-- Модальное окно поражения -->
+     <div id="lose-modal" class="modal">
+        <div class="modal-content">
+            <img src="lose.png" alt="Поражение" class="result-image">
+            <p>Ваше время: <span id="lose-time">0</span> сек</p>
+            <!-- ... остальное содержимое ... -->
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
